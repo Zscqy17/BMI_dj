@@ -7,38 +7,37 @@
 # Author: Vinman <vinman.wen@ufactory.cc> <vinman.cub@gmail.com>
 
 """
-Description: playback trajectory
-    1. requires firmware 1.2.0 and above support
-    2. need to record the trajectory in advance
+Description: Move Joint
 """
 
 import os
 import sys
 import time
+import math
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from xarm.wrapper import XArmAPI
-ip = "192.168.1.207"
 
-# #######################################################
-# """
-# Just for test example
-# """
-# if len(sys.argv) >= 2:
-#     ip = sys.argv[1]
-# else:
-#     try:
-#         from configparser import ConfigParser
-#         parser = ConfigParser()
-#         parser.read('../robot.conf')
-#         ip = parser.get('xArm', 'ip')
-#     except:
-#         ip = input('Please input the xArm ip address:')
-#         if not ip:
-#             print('input error, exit')
-#             sys.exit(1)
-# ########################################################
+
+#######################################################
+"""
+Just for test example
+"""
+if len(sys.argv) >= 2:
+    ip = sys.argv[1]
+else:
+    try:
+        from configparser import ConfigParser
+        parser = ConfigParser()
+        parser.read('../robot.conf')
+        ip = parser.get('xArm', 'ip')
+    except:
+        ip = input('Please input the xArm ip address:')
+        if not ip:
+            print('input error, exit')
+            sys.exit(1)
+########################################################
 
 
 arm = XArmAPI(ip, is_radian=True)
@@ -47,5 +46,8 @@ arm.set_mode(0)
 arm.set_state(state=0)
 
 
-arm.load_trajectory('sample.traj')
-arm.playback_trajectory()
+speed = 50
+arm.set_servo_angle(angle=[-0.1, -20.1, 0.2, 21.9, 0.1, 42.5, 1.4], speed=speed, is_radian=False, wait=True)
+print(arm.get_servo_angle(), arm.get_servo_angle(is_radian=False))
+
+arm.disconnect()
